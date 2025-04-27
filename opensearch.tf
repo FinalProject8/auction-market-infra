@@ -16,7 +16,7 @@ resource "aws_opensearch_domain" "logs" {
   }
 
   vpc_options {
-    subnet_ids         = [for subnet in aws_subnet.private : subnet.id] # Private 서브넷 사용
+    subnet_ids = [aws_subnet.private[0].id]
     security_group_ids = [aws_security_group.opensearch.id] # OpenSearch 보안 그룹 연결
   }
 

@@ -81,7 +81,7 @@ resource "aws_ecs_task_definition" "app" {
       cpu       = 512 # 할당 CPU (전체 CPU 내에서)
       memory    = 1024 # 할당 메모리 MiB (전체 메모리 내에서)
       essential = true
-      portMappings = [{ containerPort = 8080, hostPort = 8080 }] # 앱 포트
+      portMappings = [{ containerPort = 8080}] # 앱 포트
       environment = [
         { name = "SPRING_DATASOURCE_URL", value = "jdbc:mysql://${aws_db_instance.main.endpoint}/${var.db_name}" }, # rds.tf 리소스 참조
         { name = "SPRING_DATASOURCE_USERNAME", value = var.db_username }, # variables.tf 참조
@@ -107,14 +107,14 @@ resource "aws_ecs_task_definition" "app" {
         }
       }
     },
-    # App2 컨테이너
+     # App2 컨테이너
     {
       name      = "spring-app-2"
       image     = var.app2_image_uri # variables.tf 에서 정의
       cpu       = 512 # 할당 CPU
       memory    = 1024 # 할당 메모리 MiB
       essential = true
-      portMappings = [{ containerPort = 8080, hostPort = 8080 }] # App2도 8080 사용 가정
+      portMappings = [{ containerPort = 8081}] # App2도 8080 사용 가정
       environment = [
         { name = "SPRING_DATASOURCE_URL", value = "jdbc:mysql://${aws_db_instance.main.endpoint}/${var.db_name}" }, # rds.tf 리소스 참조
         { name = "SPRING_DATASOURCE_USERNAME", value = var.db_username }, # variables.tf 참조
@@ -191,7 +191,7 @@ resource "aws_ecs_service" "main" {
   load_balancer { # App2 용 연결
     target_group_arn = aws_lb_target_group.app2.arn # App2 타겟 그룹 연결 (alb.tf 참조)
     container_name   = "spring-app-2" # Task Definition 내의 App2 컨테이너 이름
-    container_port   = 8080          # App2 컨테이너 포트 (App2도 8080 가정)
+    container_port   = 8081          # App2 컨테이너 포트 (App2도 8080 가정)
   }
 
   # 서비스 배포 관련 추가 옵션 설정 가능
