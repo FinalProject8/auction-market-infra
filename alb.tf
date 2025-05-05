@@ -7,12 +7,12 @@ resource "aws_lb" "main" {
   security_groups    = [aws_security_group.alb.id]
   subnets            = [for subnet in aws_subnet.public : subnet.id] # Public 서브넷 배치
 
-  enable_deletion_protection = false # 테스트용
+  enable_deletion_protection = false
 
   tags = { Name = "${var.project_name}-alb" }
 }
 
-# Target Group (App1 용)
+# Target Group (AuctionMarket 용)
 resource "aws_lb_target_group" "app1" {
   name        = "${var.project_name}-app1-tg"
   port        = 8080 # 컨테이너 포트
@@ -32,7 +32,7 @@ resource "aws_lb_target_group" "app1" {
   tags = { Name = "${var.project_name}-app1-tg" }
 }
 
-# Target Group (App2 용)
+# Target Group (WebSocket 용)
 resource "aws_lb_target_group" "app2" {
   name        = "${var.project_name}-app2-tg"
   port        = 8081 # 컨테이너 포트 (App2도 8080 가정)

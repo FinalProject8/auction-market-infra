@@ -13,8 +13,10 @@ resource "aws_db_subnet_group" "rds" {
 # 랜덤 비밀번호 생성 (Secrets Manager 저장용)
 resource "random_password" "db_password" {
   length           = 16
-  special          = true
-  override_special = "_%@" # RDS MySQL 호환 특수문자
+  special          = false # <--- 특수 문자 사용 안 함으로 변경 (가장 간단)
+  upper            = true  # 대문자, 소문자, 숫자는 포함
+  lower            = true
+  numeric = true
 }
 
 # AWS Secrets Manager에 비밀번호 저장

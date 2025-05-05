@@ -187,21 +187,17 @@ resource "aws_ecs_task_definition" "app" {
     # 2. WebSocketApp 컨테이너
     {
       name      = "websocket-app"
-      image     = var.websocket_app_image_uri # terraform.tfvars 참조
-      cpu       = 512                           # 예시값
-      memory    = 1024                          # 예시값
+      image     = var.websocket_app_image_uri
+      cpu       = 512
       essential = true
       portMappings = [{ containerPort = 8081 }] # WebSocket 포트
       environment = [
         { name = "SPRING_PROFILES_ACTIVE", value = "prod" },
-        # { name = "SPRING_DATASOURCE_URL", value = ... }, # DB 필요 시
-        # { name = "SPRING_DATASOURCE_USERNAME", value = ... },
         { name = "AWS_REGION", value = var.aws_region },
         # --- Placeholders Replaced ---
         { name = "REDIS_HOST", value = aws_elasticache_cluster.redis.cache_nodes[0].address } # redis.tf 참조
       ]
       secrets = [
-        # { name = "SPRING_DATASOURCE_PASSWORD", valueFrom = aws_secretsmanager_secret.db_password.arn } # DB 필요 시
       ]
       logConfiguration = {
         logDriver = "awsfirelens"
@@ -219,8 +215,7 @@ resource "aws_ecs_task_definition" "app" {
     {
       name      = "batch-app"
       image     = var.batch_app_image_uri # terraform.tfvars 참조
-      cpu       = 512                     # 예시값
-      memory    = 1024                    # 예시값
+      cpu       = 512
       essential = true                    # 필요시 false 로 변경 가능
       # portMappings 없음
       environment = [
@@ -268,16 +263,9 @@ resource "aws_ecs_task_definition" "app" {
       memoryReservation = 128, # 필요시 조정
       user = "0"
     }
-  ]) # container_definitions jsonencode 끝# container_definitions jsonencode 끝
-
-  # --- (Optional) Define Volumes if needed (e.g., for Filebeat config/data, not needed for FireLens stdout) ---
-  # volume {
-  #   name = "my-volume"
-  #   host_path = "/ecs/my-volume" # Not applicable for Fargate host path
-  #   # Use EFS for persistent shared storage on Fargate if needed
-  # }
-
-  tags = { Name = "${var.project_name}-app-task" }
+  ])
+  # container_definitions jsonencode 끝# container_definitions jsonencode 끝
+  tags = { Name = "${var.project_name}-app-task"}
 
 } # aws_ecs_task_definition "app" 리소스 블록 끝
 
@@ -290,7 +278,7 @@ resource "aws_ecs_service" "main" {
   desired_count   = 2 # 필요시 조정
   launch_type     = "FARGATE"
 
-  # 배포 중단 및 재시작 시 오래된 Task 종료 대기 시간 증가 (선택 사항)
+  # 배포 중단 및 재시작 시 오래된 Task 종료 대기 시간 증가
   # deployment_configuration {
   #   deployment_circuit_breaker {
   #     enable   = true
@@ -318,14 +306,11 @@ resource "aws_ecs_service" "main" {
     container_name   = "websocket-app" # <--- 컨테이너 이름 변경 반영
     container_port   = 8081 # WebSocket 앱 포트
   }
-
-  # --- ADDED: Cloud Map Service Registry  ---
   service_registries {
     registry_arn = aws_service_discovery_service.websocket.arn
     container_name = "websocket-app" # 컨테이너 지정 가능
     container_port = 8081
   }
-
   # ALB 리스너 규칙이 먼저 생성되도록 의존성 유지
   depends_on = [aws_lb_listener.http, aws_lb_listener_rule.app2_path] # App2 규칙 리소스 이름 확인 필요
 

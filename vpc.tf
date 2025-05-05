@@ -56,5 +56,3 @@ resource "aws_subnet" "private" {
     Name = "${var.project_name}-private-subnet-${count.index + 1}"
   }
 }
-
-# 참고: Private Subnet에서 외부 인터넷 접근이 필요하면 NAT Gateway 및 관련 라우팅 설정 추가
