@@ -22,7 +22,7 @@ resource "aws_lb_target_group" "app1" {
 
   health_check {
     enabled             = true
-    path                = "/" # 필요시 수정
+    path                = "/actuator/health"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
@@ -42,7 +42,7 @@ resource "aws_lb_target_group" "app2" {
 
   health_check {
     enabled             = true
-    path                = "/" # 필요시 수정
+    path                = "/actuator/health"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2

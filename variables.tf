@@ -48,15 +48,40 @@ variable "opensearch_domain_name" {
   default     = "my-opensearch-logs"
 }
 
-variable "app1_image_uri" {
-  description = "142043808465.dkr.ecr.ap-northeast-2.amazonaws.com/auction-market-app:latest"
+variable "auction_image_uri" {
+  description = "142043808465.dkr.ecr.ap-northeast-2.amazonaws.com/my-auction-app"
   type        = string
-  # 예: 142043808465.dkr.ecr.ap-northeast-2.amazonaws.com/auction-market-app:latest
-  # 이 값은 이미지가 ECR에 푸시된 후 정확히 입력해야 합니다.
 }
 
-variable "app2_image_uri" {
-  description = "142043808465.dkr.ecr.ap-northeast-2.amazonaws.com/auction-market-realtime"
+variable "websocket_app_image_uri" {
+  description = "142043808465.dkr.ecr.ap-northeast-2.amazonaws.com/websocket-app"
   type        = string
-  # 예: 142043808465.dkr.ecr.ap-northeast-2.amazonaws.com/auction-market-realtime:latest
+}
+
+variable "batch_app_image_uri" {
+  description = "142043808465.dkr.ecr.ap-northeast-2.amazonaws.com/spring-batch-app"
+  type        = string
+}
+
+variable "s3_bucket_name_prefix" {
+  description = "S3 버킷 이름 생성 시 사용할 접두사 (이미지 저장용)"
+  type        = string
+  default     = "auction-market-prod-img" # 고유성 위해 뒤에 계정 ID 등이 붙음
+}
+
+variable "logstash_host" {
+  description = "Hostname or IP address of the Logstash EC2 instance"
+  type        = string
+}
+
+variable "logstash_port" {
+  description = "Port number for the Logstash Beats input"
+  type        = string
+  default     = "5044" # 기본값 또는 실제 포트
+}
+
+variable "gcp_key_file_path" {
+  description = "GCP 서비스 계정 키 JSON 파일 경로 (Terraform 실행 위치 기준)"
+  type        = string
+  default     = "gcp-key.json" # 루트에 파일 위치 가정
 }

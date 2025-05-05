@@ -21,9 +21,16 @@ output "app1_ecr_repository_url" {
   value       = aws_ecr_repository.app1.repository_url
 }
 
-output "app2_ecr_repository_url" {
-  description = "App2 ECR 리포지토리 URL"
-  value       = aws_ecr_repository.app2.repository_url
+output "websocket_app_ecr_repository_url" {
+  description = "WebSocketApp ECR repository URL"
+  # ecr.tf 에 정의된 WebSocket 앱 리포지토리의 논리적 이름 사용
+  value       = aws_ecr_repository.websocket_app.repository_url
+}
+# Batch 앱용 출력 추가
+output "batch_app_ecr_repository_url" {
+  description = "SpringBatchApp ECR repository URL"
+  # ecr.tf 에 정의된 Batch 앱 리포지토리의 논리적 이름 사용
+  value       = aws_ecr_repository.batch_app.repository_url
 }
 
 output "db_password_secret_arn" {
